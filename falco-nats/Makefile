@@ -1,4 +1,4 @@
-DOCKER_ORG := yourorg
+DOCKER_ORG := sysdiglabs
 IMAGE := $(if $(HUB),$(HUB)/)$(DOCKER_ORG)/falco-nats
 
 

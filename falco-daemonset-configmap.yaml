@@ -16,7 +16,7 @@ spec:
       serviceAccount: falco-account
       containers:
         - name: falco-nats
-          image: yourorg/falco-nats:latest
+          image: sysdiglabs/falco-nats:latest
           imagePullPolicy: Always
           volumeMounts:
             - mountPath: /var/run/falco/
