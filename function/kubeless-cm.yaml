@@ -1,0 +1,106 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kubeless-config
+  namespace: kubeless
+data:
+  builder-image: kubeless/function-image-builder@sha256:fe484ad1cbcee69b707a0cb33e53551f39989219f56d4037c811705efa35a06d
+  deployment: |-
+    spec:
+      template:
+        serviceAccountName: falco-pod-delete
+  enable-build-step: "false"
+  function-registry-tls-verify: "true"
+  ingress-enabled: "false"
+  runtime-images: |-
+    [
+      {
+        "ID": "python",
+        "compiled": false,
+        "versions": [
+          {
+            "name": "python27",
+            "version": "2.7",
+            "runtimeImage": "kubeless/python@sha256:07cfb0f3d8b6db045dc317d35d15634d7be5e436944c276bf37b1c630b03add8",
+            "initImage": "python:2.7"
+          },
+          {
+            "name": "python34",
+            "version": "3.4",
+            "runtimeImage": "kubeless/python@sha256:f19640c547a3f91dbbfb18c15b5e624029b4065c1baf2892144e07c36f0a7c8f",
+            "initImage": "python:3.4"
+          },
+          {
+            "name": "python36",
+            "version": "3.6",
+            "runtimeImage": "kubeless/python@sha256:0c9f8f727d42625a4e25230cfe612df7488b65f283e7972f84108d87e7443d72",
+            "initImage": "python:3.6"
+          }
+        ],
+        "depName": "requirements.txt",
+        "fileNameSuffix": ".py"
+      },
+      {
+        "ID": "nodejs",
+        "compiled": false,
+        "versions": [
+          {
+            "name": "node6",
+            "version": "6",
+            "runtimeImage": "kubeless/nodejs@sha256:61c5a10aacb709c4575a09a4aa28f822b2d008c0dbf4aa0b124705ee9ca143f9",
+            "initImage": "node:6.10"
+          },
+          {
+            "name": "node8",
+            "version": "8",
+            "runtimeImage": "kubeless/nodejs@sha256:fc1aa96e55116400ee13d664a655dfb2025ded91858ebfd5fc0c8f0d6b923eba",
+            "initImage": "node:8"
+          }
+        ],
+        "depName": "package.json",
+        "fileNameSuffix": ".js"
+      },
+      {
+        "ID": "ruby",
+        "compiled": false,
+        "versions": [
+          {
+            "name": "ruby24",
+            "version": "2.4",
+            "runtimeImage": "kubeless/ruby@sha256:0dce29c0eb2a246f7d825b6644eeae7957b26f2bfad2b7987f2134cc7b350f2f",
+            "initImage": "bitnami/ruby:2.4"
+          }
+        ],
+        "depName": "Gemfile",
+        "fileNameSuffix": ".rb"
+      },
+      {
+        "ID": "php",
+        "compiled": false,
+        "versions": [
+          {
+            "name": "php72",
+            "version": "7.2",
+            "runtimeImage": "kubeless/php@sha256:82b94c691302bc82f3900444255cabb8f230487764eafeba7866ac49d90ddc3b",
+            "initImage": "composer:1.6"
+          }
+        ],
+        "depName": "composer.json",
+        "fileNameSuffix": ".php"
+      },
+      {
+        "ID": "go",
+        "compiled": true,
+        "versions": [
+          {
+            "name": "go1.10",
+            "version": "1.10",
+            "runtimeImage": "kubeless/go@sha256:bf72622344a54e4360f31d3fea5eb9dca2c96fbedc6f0ad7c54f3eb8fb7bd353",
+            "initImage": "kubeless/go-init@sha256:ce6ef4fafe518ed78b3a68b03947c064fec1cf8c667cd109e9331f227877b3a9"
+          }
+        ],
+        "depName": "Gopkg.toml",
+        "fileNameSuffix": ".go"
+      }
+    ]
+  service-type: ClusterIP
