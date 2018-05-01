@@ -1,6 +1,6 @@
-# [NATS Client](https://github.com/nats-io/) for [Sysdig Falco](https://github.com/draios/falco/)
+# Active Kubernetes Security with Falco, NATS, & kubeless 
 
-This is a proof of concept that uses a Go NATS client to take alerts from Sysdig Falco and publish them to a NATS messaging server. Falco will detect abnormal behavior of the Kubernetes cluster in which it runs, then send an alert to the NATS client. This forwards the alert to the NATS Server. Subscribers can then subcribe to the subject `FALCO` on the NATS server to see Falco alerts, and take action on the alerts. The subscribing program could delete the offending Kubernetes Pod, set a taint on the underlying Kubernetes Node, or take other actions. Multiple subscribers can take action on the same alert; for instance one archiving the alert, and another deleting the offending Pod.
+This is a proof of concept that uses a Go NATS client to take alerts from Sysdig Falco and publish them to a NATS messaging server. Falco will detect abnormal behavior of the Kubernetes cluster in which it runs, then send an alert to the NATS client. This forwards the alert to the NATS Server. Subscribers can then subcribe to the subject `FALCO` on the NATS server to see Falco alerts, and take action on the alerts. A kubeless function is provided as an example to delete a Pod when a `CRITICAL` Falco alert is recieved. Multiple subscribers can take action on the same alert; for instance one archiving the alert, and another deleting the offending Pod.
 
 ## falco-config
 
@@ -42,7 +42,7 @@ The resulting `nats-pub` executable takes the following options.
 	-f  The named pipe to read from. Default: /var/run/falco/nats
 ```
 
-For a NATS Server that can be deployed to Kubernetes, we leveraged [this example](https://github.com/pires/kubernetes-nats-cluster) by [Paulo Pires](https://github.com/pires/). As this is a proof of concept, we disabled TLS and authentication for the NATS server. (Yes, ironic for a security tool.)
+For a NATS Server that can be deployed to Kubernetes, we leveraged [the example](http://kubeless.io/docs/quick-start/) in the Kubeless quick start. 
 
 ##  falco-daemonset-configmap.yaml
 
@@ -53,16 +53,16 @@ This deploys Falco and the falco-nats container as a Kubernetes daemonset. It al
       serviceAccount: falco-account
       containers:
         - name: falco-nats
-          image: yourorg/falco-nats:latest
+          image: sysdiglabs/falco-nats:latest
           imagePullPolicy: Always
           volumeMounts:
             - mountPath: /var/run/falco/
               name: shared-pipe
         - name: falco
-          image: sysdig/falco:dev
+          image: sysdig/falco:latest
 ```
 
-Add the container for the NATS client. Change `yourorg` to your Docker org or container registry of choice. We are also using the `dev` version/tag for the Falco container.
+Added the container for the NATS client. 
 
 ```
           args: [ "/usr/bin/falco", "-K", "/var/run/secrets/kubernetes.io/serviceaccount/token", "-k", "https://kubernetes", "-pk", "-U"]
@@ -72,7 +72,7 @@ Add the container for the NATS client. Change `yourorg` to your Docker org or co
               readOnly: false
             - mountPath: /host/var/run/docker.sock
 ```
-Add a `volumeMount` for our shared named pipe to the `falco` container.
+Added a `volumeMount` for our shared named pipe to the `falco` container.
 
 ```
               name: falco-config
@@ -89,7 +89,7 @@ Add a `volumeMount` for our shared named pipe to the `falco` container.
           emptyDir: {}
         - name: docker-socket
 ```
-Add an Init Container to create the named pipe. This helps us ensure the pipe is available for either container, as the Init Container must finish before either application container starts.
+Added an Init Container to create the named pipe. This helps us ensure the pipe is available for either container, as the Init Container must finish before either application container starts.
 
 To deploy the DaemonSet, run the below.
 
@@ -118,3 +118,10 @@ Published [FALCO] : '{"output":"16:57:40.936641184: Notice A shell was spawned i
 falco-nats$ kubectl exec -it falco-75r25 -c falco -- bash
 ```
 
+## nodejs-app
+
+This is an application that can be exploited via unsanitized data in a cookie. See the [README.MD](nodejs-app/README.MD) in the `nodejs-app` for more details.
+
+## kubeless-function
+
+This is a kubeless function that subscribes to the NATS `FALCO` subject on the NATS server and fires when an alert is recieved. See the [README.MD](kubeless-function/README.MD) for more details. 

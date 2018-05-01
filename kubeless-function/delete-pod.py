@@ -16,7 +16,7 @@ def find_pod_ns(podname=None):
     response=v1.list_pod_for_all_namespaces(watch=False)
     for i in response.items:
         if i.metadata.name == podname:
-            print("%s\t%s\t%s" % (i.status.pod_ip, i.metadata.namespace, i.metadata.name))
+            print 'Found Pod NS: {}\tPOD: {}'.format(i.metadata.namespace, i.metadata.name)
             ns=i.metadata.namespace
             break
 

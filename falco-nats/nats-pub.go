@@ -23,14 +23,14 @@ import (
 	"github.com/nats-io/go-nats"
 )
 
-// NOTE: Use tls scheme for TLS, e.g. nats-pub -s tls://demo.nats.io:4443 foo hello
+
 func usage() {
 	log.Fatalf("Usage: nats-pub [-s server (%s)] <subject> <msg> \n", nats.DefaultURL)
 }
 
 
 func main() {
-	var urls = flag.String("s", "nats://nats:4222", "The nats server URLs (separated by comma)")
+	var urls = flag.String("s", "nats://nats.nats-io.svc.cluster.local:4222", "The nats server URLs (separated by comma)")
 	var pipePath = flag.String("f", "/var/run/falco/nats", "The named pipe path")
 	var subj = "FALCO"
 
