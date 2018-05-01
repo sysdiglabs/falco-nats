@@ -22,7 +22,7 @@ spec:
             - mountPath: /var/run/falco/
               name: shared-pipe
         - name: falco
-          image: sysdig/falco:dev
+          image: sysdig/falco:latest
           securityContext:
             privileged: true
           args: [ "/usr/bin/falco", "-K", "/var/run/secrets/kubernetes.io/serviceaccount/token", "-k", "https://kubernetes", "-pk", "-U"]
