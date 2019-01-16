@@ -1,3 +1,5 @@
+# THIS REPO IS DEPRECATED IN FAVOR OF THE [OFFICIAL EXAMPLE](https://github.com/falcosecurity/falco/tree/dev/integrations/kubernetes-response-engine)
+
 # Active Kubernetes Security with Falco, NATS, & kubeless 
 
 This is a proof of concept that uses a Go NATS client to take alerts from Sysdig Falco and publish them to a NATS messaging server. Falco will detect abnormal behavior of the Kubernetes cluster in which it runs, then send an alert to the NATS client. This forwards the alert to the NATS Server. Subscribers can then subcribe to the subject `FALCO` on the NATS server to see Falco alerts, and take action on the alerts. A kubeless function is provided as an example to delete a Pod when a `CRITICAL` Falco alert is recieved. Multiple subscribers can take action on the same alert; for instance one archiving the alert, and another deleting the offending Pod.
